@@ -1,46 +1,98 @@
-import { useState } from 'react'
-
+// import { useState } from 'react'
+import { useState } from 'react';
+import './App.css'
 import Layout from './components/Layout'
+const baseClasses =
+  "h-16 w-full flex items-center justify-center text-xl font-semibold rounded-lg cursor-pointer transition duration-150 ease-in-out";
+
+// const equalsClasses = 
+//             "bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800";
+
+// const defaultClasses = 
+//             "bg-white text-gray-800 border border-gray-200 hover:bg-gray-50 active:bg-gray-100";            
+
+
+
 
 function App() {
-  const [count, setCount] = useState(0)
+    const [input1, setInput1] = useState("");
+    const [input2, setInput2] = useState("");
+    const [op, setOp] = useState("");
+    const [eq, setEq] = useState(false);
+    const [ans, setAns] = useState(0);
+
+  const signList = [
+    '%', 'CE', 'C', '⌫', // ⌫ 代表退格/刪除鍵 (Backspace)
+    '1/x', 'x²', '²√x', '÷',
+    '7', '8', '9', '×',
+    '4', '5', '6', '−', // 這裡使用數學上的減號 U+2212 '−'
+    '1', '2', '3', '+',
+    '±', '0', '.', '=',
+  ];
+
+  const isNum = (sign: string)=> {
+    return !isNaN(parseFloat(sign))
+  };
+
+  const handleCalc = (sign: string) => {
+
+    if (isNum(sign)) {
+        if(op) {
+          setInput2(input2 + sign);
+        } else {
+        setInput1(input1+sign);
+        }
+        return;
+   }
+
+   if("+" === sign){
+    setOp(sign);
+    return;
+   }
+
+   if("=" === sign) {
+    if("+" === op) {
+      setAns(parseFloat(input1) + parseFloat(input2));
+      setEq(true);
+    }
+   }
+
+
+
+  };
+
+  const getDisplayText=()=>{
+    if(eq) {
+      return ans+"";
+    }
+
+    if(op) {
+    
+      return input2;
+    }
+    return input1;
+  }
 
   return (
     <Layout>
-    
-      <div className="grid grid-cols-4 gap-4">
-  {/* 這裡面的子元素會自動變成 3 欄排列 */}
-    <div>%</div>
-    <div>CE</div>
-    <div>C</div>
-    <div>x</div>
 
-    <div>1/X</div>
-    <div>x²</div>
-    <div>2√x</div>
-    <div>/</div>
+      <input type='text' value={getDisplayText()} className="bg-green-100 p-4 mb-4 rounded-lg shadow-inner" />
+      <div className="grid grid-cols-4 gap-2 bg-gray-100 p-4 rounded-xl shadow-2xl max-w-sm mx-auto">
+        {
+          signList.map(
+            (sign, index) => {
 
-    <div>7</div>
-    <div>8</div>
-    <div>9</div>
-    <div>X</div>
+              return (
+                <button key={index} className={baseClasses}  onClick={() => {handleCalc(sign);}}>
+                  {sign}
+                </button>
+              )
+            }
+          )
+        }
 
-    <div>4</div>
-    <div>5</div>
-    <div>6</div>
-    <div>-</div>
-
-    <div>1</div>
-    <div>2</div>
-    <div>3</div>
-    <div>+</div>
-
-    <div>+/-</div>
-    <div>0</div>
-    <div>.</div>
-    <div>=</div>
-</div>
-     </Layout>
+      </div>
+    </Layout>
   )
 }
 
