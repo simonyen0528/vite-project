@@ -1,4 +1,4 @@
-iimport React, { useState } from "react";
+import React, { useState } from "react";
 
 // 定義型別
 interface Bird {
